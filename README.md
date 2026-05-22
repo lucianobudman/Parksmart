@@ -61,7 +61,7 @@ src
 ## 1. Clonar repositorio
 
 ```bash
-git clone URL_DEL_REPO
+git clone https://github.com/lucianobudman/Parksmart.git
 ```
 
 ---

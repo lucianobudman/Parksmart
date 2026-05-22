@@ -12,6 +12,7 @@ Aplicación móvil desarrollada con React Native + Expo.
 ## 1) Clonar repositorio
 
 ```bash
+<<<<<<< HEAD
 git clone TU_REPO
 ````
 
@@ -21,6 +22,9 @@ git clone TU_REPO
 
 ```bash
 cd ParkSmart
+=======
+git clone https://github.com/lucianobudman/Parksmart.git
+>>>>>>> 1951e281d5d10116aea2336f9caf45d0dda2755b
 ```
 
 ---

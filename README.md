@@ -13,7 +13,7 @@ Aplicación móvil desarrollada con React Native + Expo.
 
 ```bash
 <<<<<<< HEAD
-git clone TU_REPO
+git clone https://github.com/lucianobudman/Parksmart.git
 ````
 
 ---

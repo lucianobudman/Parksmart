@@ -1,6 +1,7 @@
 export interface User {
   uid: string;
   email: string;
+  vehicleType?: 'auto' | 'moto' | 'camioneta';
 }
 
 export interface AuthContextType {
@@ -9,4 +10,6 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  setVehicleType: (type: 'auto' | 'moto' | 'camioneta') => void;
 }
+

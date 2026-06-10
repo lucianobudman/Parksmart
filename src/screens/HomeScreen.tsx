@@ -35,7 +35,7 @@ export default function HomeScreen() {
   }
   
   const nearbyParkings = location
-    ? filterNearbyParkings(allParkings, location.latitude, location.longitude, RADIUS_KM)
+    ? filterNearbyParkings(allParkings, location.latitude, location.longitude, RADIUS_KM, user?.vehicleType)
     : [];
 
   if (!authContext) {
@@ -86,10 +86,41 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Sesión info */}
+      {/* Sesión info con vehículo */}
       <View style={[globalStyles.card, { borderLeftColor: '#50C878', marginBottom: 16 }]}>
-        <Text style={{ color: '#50C878', fontWeight: '600', marginBottom: 4 }}>✓ Sesión Activa</Text>
-        <Text style={globalStyles.textSecondary}>{user?.email}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <View>
+            <Text style={{ color: '#50C878', fontWeight: '600', marginBottom: 4 }}>✓ Sesión Activa</Text>
+            <Text style={globalStyles.textSecondary}>{user?.email}</Text>
+            {user?.vehicleType && (
+              <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12 }}>
+                  {user.vehicleType === 'auto'
+                    ? '🚗'
+                    : user.vehicleType === 'moto'
+                    ? '🏍️'
+                    : '🚙'}
+                </Text>
+                <Text style={{ marginLeft: 6, color: '#007AFF', fontWeight: '600', fontSize: 12 }}>
+                  {user.vehicleType.charAt(0).toUpperCase() + user.vehicleType.slice(1)}
+                </Text>
+              </View>
+            )}
+          </View>
+          {user?.vehicleType && (
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#E3F2FD',
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 6,
+              }}
+              onPress={() => Alert.alert('Cambiar vehículo', 'Esta función se agregará pronto')}
+            >
+              <Text style={{ color: '#007AFF', fontWeight: '600', fontSize: 12 }}>Cambiar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Test parking button */}
@@ -139,6 +170,21 @@ export default function HomeScreen() {
                     ) : (
                       <View style={[globalStyles.badge, { backgroundColor: '#E8F5E9' }]}>
                         <Text style={[globalStyles.badgeText, { color: '#4CAF50' }]}>✓ Gratuito</Text>
+                      </View>
+                    )}
+                    {parking.availableFor && parking.availableFor.includes('auto') && (
+                      <View style={[globalStyles.badge, { backgroundColor: '#F3E5F5' }]}>
+                        <Text style={[globalStyles.badgeText, { color: '#9C27B0' }]}>🚗 Auto</Text>
+                      </View>
+                    )}
+                    {parking.availableFor && parking.availableFor.includes('moto') && (
+                      <View style={[globalStyles.badge, { backgroundColor: '#FCE4EC' }]}>
+                        <Text style={[globalStyles.badgeText, { color: '#E91E63' }]}>🏍️ Moto</Text>
+                      </View>
+                    )}
+                    {parking.availableFor && parking.availableFor.includes('camioneta') && (
+                      <View style={[globalStyles.badge, { backgroundColor: '#E0F2F1' }]}>
+                        <Text style={[globalStyles.badgeText, { color: '#009688' }]}>🚙 Camioneta</Text>
                       </View>
                     )}
                   </View>

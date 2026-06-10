@@ -20,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
+          vehicleType: (firebaseUser.displayName as any) || undefined,
         });
       } else {
         setUser(null);
@@ -49,14 +50,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await signOut(auth);
+      setUser(null);
     } catch (error) {
       throw error;
     }
   };
 
+  const setVehicleType = (type: 'auto' | 'moto' | 'camioneta') => {
+    if (user) {
+      setUser({ ...user, vehicleType: type });
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setVehicleType }}>
       {children}
     </AuthContext.Provider>
   );
 };
+

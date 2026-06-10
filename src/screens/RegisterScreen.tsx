@@ -10,10 +10,12 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { globalStyles } from '../styles/global';
 
 export default function RegisterScreen() {
+  const navigation = useNavigation() as any;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -102,6 +104,16 @@ export default function RegisterScreen() {
           ) : (
             <Text style={globalStyles.buttonText}>Registrarse</Text>
           )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={{ marginTop: 16 }}
+        >
+          <Text style={{ textAlign: 'center' }}>
+            ¿Ya tienes cuenta?{' '}
+            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>Inicia sesión</Text>
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

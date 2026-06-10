@@ -9,10 +9,12 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { globalStyles } from '../styles/global';
 
 export default function LoginScreen() {
+  const navigation = useNavigation() as any;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -81,10 +83,15 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <Text style={{ textAlign: 'center', marginTop: 16 }}>
-          ¿No tienes cuenta?{' '}
-          <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>Regístrate</Text>
-        </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Register')}
+          style={{ marginTop: 16 }}
+        >
+          <Text style={{ textAlign: 'center' }}>
+            ¿No tienes cuenta?{' '}
+            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>Regístrate</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );

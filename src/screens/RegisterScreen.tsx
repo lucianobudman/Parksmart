@@ -60,39 +60,58 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={globalStyles.container}
     >
-      <ScrollView contentContainerStyle={globalStyles.centered}>
-        <Text style={globalStyles.title}>Crear Cuenta</Text>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+        <View style={{ alignItems: 'center', marginBottom: 40 }}>
+          <Text style={[globalStyles.title, { fontSize: 36, marginBottom: 8 }]}>🅿️</Text>
+          <Text style={globalStyles.title}>Crear Cuenta</Text>
+          <Text style={globalStyles.textSecondary}>Únete a ParkSmart</Text>
+        </View>
 
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Email"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          editable={!loading}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 }}>
+            Email
+          </Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="tu@email.com"
+            placeholderTextColor="#ccc"
+            value={email}
+            onChangeText={setEmail}
+            editable={!loading}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+        </View>
 
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Contraseña"
-          placeholderTextColor="#999"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          editable={!loading}
-        />
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 }}>
+            Contraseña
+          </Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Mínimo 6 caracteres"
+            placeholderTextColor="#ccc"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            editable={!loading}
+          />
+        </View>
 
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Confirmar contraseña"
-          placeholderTextColor="#999"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-          editable={!loading}
-        />
+        <View style={{ marginBottom: 28 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 }}>
+            Confirmar contraseña
+          </Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Repite tu contraseña"
+            placeholderTextColor="#ccc"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            editable={!loading}
+          />
+        </View>
 
         <TouchableOpacity
           style={globalStyles.button}
@@ -106,16 +125,14 @@ export default function RegisterScreen() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
-          style={{ marginTop: 16 }}
-        >
-          <Text style={{ textAlign: 'center' }}>
-            ¿Ya tienes cuenta?{' '}
-            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>Inicia sesión</Text>
-          </Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+          <Text style={globalStyles.textSecondary}>¿Ya tienes cuenta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{ color: '#007AFF', fontWeight: '700', fontSize: 14 }}>Inicia sesión</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+

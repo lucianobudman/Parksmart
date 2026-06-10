@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
@@ -47,29 +48,43 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={globalStyles.container}
     >
-      <View style={globalStyles.centered}>
-        <Text style={globalStyles.title}>ParkSmart</Text>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+        <View style={{ alignItems: 'center', marginBottom: 40 }}>
+          <Text style={[globalStyles.title, { fontSize: 36, marginBottom: 8 }]}>🅿️</Text>
+          <Text style={globalStyles.title}>ParkSmart</Text>
+          <Text style={globalStyles.textSecondary}>Encuentra parkings cerca de ti</Text>
+        </View>
 
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Email"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          editable={!loading}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+        <View style={{ marginBottom: 24 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 }}>
+            Email
+          </Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="tu@email.com"
+            placeholderTextColor="#ccc"
+            value={email}
+            onChangeText={setEmail}
+            editable={!loading}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+        </View>
 
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Contraseña"
-          placeholderTextColor="#999"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          editable={!loading}
-        />
+        <View style={{ marginBottom: 28 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 }}>
+            Contraseña
+          </Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="••••••••"
+            placeholderTextColor="#ccc"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            editable={!loading}
+          />
+        </View>
 
         <TouchableOpacity
           style={globalStyles.button}
@@ -83,16 +98,14 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={{ marginTop: 16 }}
-        >
-          <Text style={{ textAlign: 'center' }}>
-            ¿No tienes cuenta?{' '}
-            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>Regístrate</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+          <Text style={globalStyles.textSecondary}>¿No tienes cuenta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={{ color: '#007AFF', fontWeight: '700', fontSize: 14 }}>Regístrate aquí</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+

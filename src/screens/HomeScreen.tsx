@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -17,8 +17,24 @@ const RADIUS_KM = 4;
 export default function HomeScreen() {
   const authContext = useContext(AuthContext);
   const { location, loading: locationLoading, error: locationError } = useUserLocation();
+  const [showTestParking, setShowTestParking] = useState(false);
   
-  const allParkings = generateMockParkings();
+  let allParkings = generateMockParkings();
+  
+  // Agregar parking de prueba si está activado
+  if (showTestParking && location) {
+    allParkings = [
+      ...allParkings,
+      {
+        id: 999,
+        name: '🧪 Parking Test (Tu Ubicación)',
+        lat: location.latitude,
+        lon: location.longitude,
+        fee: 'no',
+      },
+    ];
+  }
+  
   const nearbyParkings = location
     ? filterNearbyParkings(allParkings, location.latitude, location.longitude, RADIUS_KM)
     : [];
@@ -63,6 +79,24 @@ export default function HomeScreen() {
       </View>
 
       <Text style={{ marginBottom: 12, color: '#666' }}>Sesión: {user?.email}</Text>
+
+      {/* Botón para agregar parking de prueba */}
+      {location && (
+        <TouchableOpacity
+          style={{
+            backgroundColor: showTestParking ? '#4CAF50' : '#FF9800',
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            borderRadius: 6,
+            marginBottom: 12,
+          }}
+          onPress={() => setShowTestParking(!showTestParking)}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', textAlign: 'center' }}>
+            {showTestParking ? '✓ Parking Test Activo' : '+ Agregar Parking Test'}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {locationError ? (
         <View style={globalStyles.card}>

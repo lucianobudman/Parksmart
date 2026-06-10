@@ -21,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
           vehicleType: (firebaseUser.displayName as any) || undefined,
+          needsVehicleSelection: false,
         });
       } else {
         setUser(null);
@@ -42,6 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      // Marcar que necesita seleccionar vehículo
+      setUser((prev) => prev ? { ...prev, needsVehicleSelection: true } : null);
     } catch (error) {
       throw error;
     }
@@ -58,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setVehicleType = (type: 'auto' | 'moto' | 'camioneta') => {
     if (user) {
-      setUser({ ...user, vehicleType: type });
+      setUser({ ...user, vehicleType: type, needsVehicleSelection: false });
     }
   };
 
@@ -68,4 +71,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
 

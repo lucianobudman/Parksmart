@@ -5,7 +5,6 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { globalStyles } from '../styles/global';
 
@@ -23,7 +22,6 @@ const vehicles: VehicleOption[] = [
 ];
 
 export default function VehicleSelectionScreen() {
-  const navigation = useNavigation() as any;
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
@@ -34,12 +32,6 @@ export default function VehicleSelectionScreen() {
 
   const handleSelectVehicle = (type: 'auto' | 'moto' | 'camioneta') => {
     setVehicleType(type);
-    Alert.alert('✓ Listo', `Vehículo: ${type.charAt(0).toUpperCase() + type.slice(1)}`, [
-      {
-        text: 'Ir a Home',
-        onPress: () => navigation.navigate('HomeTab'),
-      },
-    ]);
   };
 
   return (

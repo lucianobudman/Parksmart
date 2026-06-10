@@ -47,8 +47,10 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await register(email, password);
-      // Ir a selección de vehículo después de registrarse
-      navigation.navigate('VehicleSelection');
+      // Esperar un poco para que Firebase procese
+      setTimeout(() => {
+        navigation.navigate('VehicleSelection');
+      }, 500);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Error al registrarse');
       setLoading(false);

@@ -178,7 +178,6 @@ La app usa datos mock de parkings precargados para mostrar resultados de forma i
 
 ## 📝 Notas
 
-- **Parkings mock**: Actualmente usa datos ficticios. Puedes conectar una API real
 - **Radio de búsqueda**: Configurable en `HomeScreen.tsx` (actualmente 4km)
 - **Distancia en km**: Se calcula automáticamente según ubicación del usuario
 

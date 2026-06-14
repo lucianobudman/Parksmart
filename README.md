@@ -21,31 +21,27 @@ Aplicación móvil en React Native con Expo para ver parkings cercanos, seleccio
 
 ## ▶️ Instalación
 
-1. Clona el proyecto
+1. Clona el proyecto.
 2. Instala dependencias:
 
 ```bash
 npm install
 ```
 
-3. Inicia la app:
+3. Configura Firebase siguiendo los pasos de la sección siguiente.
+4. Inicia la app:
 
 ```bash
 npm start
 ```
 
-Opcionalmente:
-
-```bash
-npm run android
-npm run web
-```
 
 ## 🔧 Configuración de Firebase
 
 1. Crea un proyecto en Firebase Console.
 2. Activa Authentication con el proveedor Email/Password.
-3. Copia la configuración de tu proyecto y reemplázala en [src/config/firebase.ts](src/config/firebase.ts).
+3. Activa Firestore Database para que la app pueda guardar favoritos y usar la base de datos.
+4. Copia la configuración de tu proyecto y reemplázala en [src/config/firebase.ts](src/config/firebase.ts).
 
 ## 📁 Estructura del proyecto
 
@@ -174,8 +170,9 @@ La app usa datos mock de parkings precargados para mostrar resultados de forma i
 - Verifica que tu ubicación esté cerca
 
 ### "Error de Firebase"
-- Revisa credenciales en `src/config/firebase.ts`
-- Asegúrate que Authentication está habilitado en Firebase Console
+- Revisa las credenciales en `src/config/firebase.ts`
+- Asegúrate que Authentication y Firestore estén habilitados en Firebase Console
+- Verifica que el proyecto de Firebase elegido coincida con la configuración cargada en el app
 
 ---
 

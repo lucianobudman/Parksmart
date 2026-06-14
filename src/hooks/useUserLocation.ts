@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 
+const FALLBACK_LOCATION = {
+  latitude: -34.6037,
+  longitude: -58.3816,
+};
+
 export const useUserLocation = () => {
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(FALLBACK_LOCATION);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,7 +16,8 @@ export const useUserLocation = () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          setError('Permiso de ubicación denegado');
+          setLocation(FALLBACK_LOCATION);
+          setError('Permiso de ubicación denegado. Se muestran parkings de referencia');
           setLoading(false);
           return;
         }
@@ -26,7 +32,8 @@ export const useUserLocation = () => {
         });
         setError(null);
       } catch (err) {
-        setError('Error al obtener ubicación');
+        setLocation(FALLBACK_LOCATION);
+        setError('No se pudo obtener ubicación. Se muestran parkings de referencia');
       } finally {
         setLoading(false);
       }

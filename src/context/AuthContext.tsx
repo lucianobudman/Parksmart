@@ -5,7 +5,8 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebase';
 import { AuthContextType, User } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,14 +16,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          vehicleType: (firebaseUser.displayName as any) || undefined,
-          needsVehicleSelection: false,
-        });
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          const data = userDoc.data();
+          const role =
+            data?.role === 'admin'
+              ? 'admin'
+              : data?.role === 'user'
+              ? 'user'
+              : data?.isAdmin || data?.admin
+              ? 'admin'
+              : firebaseUser.email?.toLowerCase().includes('admin')
+              ? 'admin'
+              : 'user';
+
+          const vehicleType = data?.vehicleType as 'auto' | 'moto' | 'camioneta' | undefined;
+          const hasVehicle = typeof data?.hasVehicle === 'boolean' ? data.hasVehicle : Boolean(vehicleType);
+          const needsVehicleSelection = !hasVehicle;
+
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            vehicleType,
+            hasVehicle,
+            needsVehicleSelection,
+            role,
+          });
+        } catch (error) {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            vehicleType: (firebaseUser.displayName as any) || undefined,
+            hasVehicle: false,
+            needsVehicleSelection: false,
+            role: firebaseUser.email?.toLowerCase().includes('admin') ? 'admin' : 'user',
+          });
+        }
       } else {
         setUser(null);
       }
@@ -42,9 +73,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (email: string, password: string) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // Marcar que necesita seleccionar vehículo
-      setUser((prev) => prev ? { ...prev, needsVehicleSelection: true } : null);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        role: 'user',
+        hasVehicle: false,
+      }, { merge: true });
+      setUser({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email || '',
+        needsVehicleSelection: true,
+        hasVehicle: false,
+        role: 'user',
+      });
     } catch (error) {
       throw error;
     }
@@ -61,12 +101,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setVehicleType = (type: 'auto' | 'moto' | 'camioneta') => {
     if (user) {
-      setUser({ ...user, vehicleType: type, needsVehicleSelection: false });
+      const nextUser = {
+        ...user,
+        vehicleType: type,
+        hasVehicle: true,
+        needsVehicleSelection: false,
+      };
+
+      setUser(nextUser);
+      setDoc(doc(db, 'users', user.uid), {
+        vehicleType: type,
+        hasVehicle: true,
+      }, { merge: true });
     }
   };
 
+  const setUserRole = async (role: 'admin' | 'user') => {
+    if (!user) {
+      return;
+    }
+
+    await setDoc(doc(db, 'users', user.uid), { role }, { merge: true });
+    setUser({ ...user, role });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, setVehicleType }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setVehicleType, setUserRole }}>
       {children}
     </AuthContext.Provider>
   );

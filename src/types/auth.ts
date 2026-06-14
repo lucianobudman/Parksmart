@@ -2,7 +2,9 @@ export interface User {
   uid: string;
   email: string;
   vehicleType?: 'auto' | 'moto' | 'camioneta';
+  hasVehicle?: boolean;
   needsVehicleSelection?: boolean;
+  role?: 'admin' | 'user';
 }
 
 export interface AuthContextType {
@@ -12,5 +14,6 @@ export interface AuthContextType {
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setVehicleType: (type: 'auto' | 'moto' | 'camioneta') => void;
+  setUserRole: (role: 'admin' | 'user') => Promise<void>;
 }
 

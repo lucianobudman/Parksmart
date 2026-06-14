@@ -45,7 +45,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior="height"
       style={globalStyles.container}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>

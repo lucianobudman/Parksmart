@@ -4,6 +4,9 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
@@ -99,6 +102,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const currentUser = auth.currentUser;
+
+      if (!currentUser || !currentUser.email) {
+        throw new Error('No hay una sesión activa para cambiar la contraseña');
+      }
+
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+      await updatePassword(currentUser, newPassword);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const setVehicleType = (type: 'auto' | 'moto' | 'camioneta') => {
     if (user) {
       const nextUser = {
@@ -126,7 +145,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, setVehicleType, setUserRole }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        changePassword,
+        setVehicleType,
+        setUserRole,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

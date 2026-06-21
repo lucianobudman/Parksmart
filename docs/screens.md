@@ -1,7 +1,7 @@
-# Carpeta screens
+# Pantallas
 
 ## Objetivo
-Contiene todas las pantallas visibles de la app.
+Esta carpeta contiene todas las pantallas visibles de la app.
 
 ## Archivos principales
 
@@ -10,25 +10,40 @@ Contiene todas las pantallas visibles de la app.
 - [src/screens/RegisterScreen.tsx](../src/screens/RegisterScreen.tsx)
 - [src/screens/VehicleSelectionScreen.tsx](../src/screens/VehicleSelectionScreen.tsx)
 - [src/screens/FavoritesScreen.tsx](../src/screens/FavoritesScreen.tsx)
+- [src/screens/UserConfigScreen.tsx](../src/screens/UserConfigScreen.tsx)
 
-### HomeScreen
-- muestra los parkings cercanos
-- obtiene ubicación y calcula distancias
-- permite abrir el parking en Google Maps
-- permite marcarlo como favorito
+## HomeScreen
 
-### LoginScreen
-- permite iniciar sesión con email y contraseña
-- navega a registro si el usuario no tiene cuenta
+- muestra la lista de parkings cercanos
+- usa el radio configurado por el usuario
+- permite abrir la ubicación en Google Maps
+- permite marcar o desmarcar favoritos
+- si el usuario es admin, puede crear nuevos parkings desde un formulario
 
-### RegisterScreen
+## LoginScreen
+
+- recibe email y contraseña
+- valida que los campos no estén vacíos
+- llama al método `login` del contexto de autenticación
+
+## RegisterScreen
+
 - permite crear una cuenta nueva
-- valida que la contraseña tenga un mínimo de caracteres
+- valida que las contraseñas coincidan y tengan al menos 6 caracteres
+- luego envía al flujo de selección de vehículo
 
-### VehicleSelectionScreen
-- permite elegir el tipo de vehículo
-- se usa al iniciar por primera vez para filtrar parkings
+## VehicleSelectionScreen
 
-### FavoritesScreen
+- muestra opciones para auto, moto y camioneta
+- guarda la selección del usuario para filtrar parkings más adelante
+
+## FavoritesScreen
+
 - muestra los parkings guardados por el usuario
-- permite abrirlos en maps o quitarles el favorito
+- permite abrir cada uno en Maps o quitarlo de favoritos
+
+## UserConfigScreen
+
+- muestra el correo del usuario
+- permite cambiar la contraseña actual por una nueva
+- permite cerrar sesión desde la interfaz

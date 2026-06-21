@@ -4,10 +4,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import HomeScreen from '../screens/HomeScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import UserConfigScreen from '../screens/UserConfigScreen';
 import VehicleSelectionScreen from '../screens/VehicleSelectionScreen';
 
 const Stack = createNativeStackNavigator();
@@ -19,7 +21,7 @@ function MainTabs() {
 
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8E8E93',
@@ -34,7 +36,24 @@ function MainTabs() {
           fontSize: 12,
           fontWeight: '700',
         },
-      }}
+        tabBarIcon: ({ color, size, focused }) => {
+          if (route.name === 'HomeTab') {
+            return <MaterialIcons name="local-parking" size={size} color={color} />;
+          }
+
+          if (route.name === 'FavoritesTab') {
+            return (
+              <MaterialIcons
+                name={focused ? 'star' : 'star-border'}
+                size={size}
+                color={color}
+              />
+            );
+          }
+
+          return null;
+        },
+      })}
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} options={{ title: 'Parkings' }} />
       <Tab.Screen name="FavoritesTab" component={FavoritesScreen} options={{ title: 'Favoritos' }} />
@@ -68,7 +87,10 @@ export default function AppNavigator() {
           ) : user.needsVehicleSelection ? (
             <Stack.Screen name="VehicleSelection" component={VehicleSelectionScreen} />
           ) : (
-            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <>
+              <Stack.Screen name="MainTabs" component={MainTabs} />
+              <Stack.Screen name="UserConfig" component={UserConfigScreen} />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,17 +1,20 @@
-# Carpeta hooks
+# Hooks
 
 ## Objetivo
-Contiene lógica reutilizable para obtener datos del dispositivo.
+Los hooks encapsulan lógica reutilizable para evitar repetir código en varias pantallas.
 
 ## Archivo principal
 
 - [src/hooks/useUserLocation.ts](../src/hooks/useUserLocation.ts)
 
-### Qué hace
-- pide permisos de ubicación si es necesario
-- obtiene la ubicación actual del usuario
-- devuelve el estado de carga y posibles errores
+## Qué hace
 
-### Por qué es útil
-- evita repetir la lógica de GPS en cada pantalla
-- permite que HomeScreen y otras pantallas usen la misma fuente de ubicación
+- solicita permisos de ubicación en segundo plano del sistema
+- obtiene la ubicación actual del usuario cuando es posible
+- usa una ubicación de respaldo si el permiso no se concede
+- devuelve tres valores: `location`, `error` y `loading`
+
+## Importancia en la app
+
+- permite que la pantalla principal pueda mostrar parkings cercanos sin duplicar la lógica de GPS
+- si la ubicación no está disponible, la UI aún puede mostrar resultados aproximados usando datos de referencia

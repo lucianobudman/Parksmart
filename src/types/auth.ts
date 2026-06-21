@@ -13,6 +13,7 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   setVehicleType: (type: 'auto' | 'moto' | 'camioneta') => void;
   setUserRole: (role: 'admin' | 'user') => Promise<void>;
 }

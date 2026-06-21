@@ -85,6 +85,7 @@ export const globalStyles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
+    paddingTop:20,
     fontWeight: '800',
     marginBottom: 8,
     color: '#1a1a1a',

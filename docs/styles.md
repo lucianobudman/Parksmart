@@ -1,17 +1,22 @@
-# Carpeta styles
+# Estilos globales
 
 ## Objetivo
-Define la apariencia visual compartida de la app.
+Centraliza los estilos reutilizables que usan varias pantallas.
 
 ## Archivo principal
 
 - [src/styles/global.ts](../src/styles/global.ts)
 
-### Qué incluye
-- colores y tamaños base
-- estilos de botones, tarjetas y inputs
-- estilos de títulos, subtítulos y badges
+## Qué incluye
 
-### Por qué es importante
-- evita repetir estilo en cada pantalla
-- mantiene una apariencia más consistente en toda la app
+- estilos base para contenedores, centrado y layout general
+- botones primarios y secundarios
+- inputs y tarjetas
+- estilos para títulos, subtítulos, texto secundario y badges
+- encabezados reutilizables para pantallas
+
+## Importancia
+
+- reduce la duplicación visual entre pantallas
+- mantiene una identidad visual consistente
+- facilita ajustes globales en toda la app

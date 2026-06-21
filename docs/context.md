@@ -1,19 +1,22 @@
-# Carpeta context
+# Contexto de autenticación
 
 ## Objetivo
-Administra el estado global de autenticación del usuario.
+Este módulo administra el estado global de sesión del usuario y expone las operaciones necesarias para interactuar con Firebase Auth.
 
 ## Archivo principal
 
 - [src/context/AuthContext.tsx](../src/context/AuthContext.tsx)
 
-### Qué hace
-- guarda si el usuario está logueado o no
-- mantiene el estado de carga inicial
-- expone funciones de login, registro, logout y selección de vehículo
-- guarda el rol del usuario (`admin` o `user`)
+## Qué hace
 
-### Flujo de uso
-- la app consume este contexto desde varias pantallas
-- si el usuario no está autenticado, se muestra la navegación de auth
-- si ya eligió vehículo, entra directamente a la app principal
+- mantiene el estado actual del usuario autenticado
+- detecta si la sesión está cargando o ya terminó
+- permite iniciar sesión, registrarse, cerrar sesión y cambiar contraseña
+- guarda información como `vehicleType`, `hasVehicle`, `needsVehicleSelection` y `role`
+- actualiza Firestore cuando el usuario selecciona su vehículo o cambia su rol
+
+## Flujo importante
+
+- la app usa este contexto para decidir si mostrar la navegación pública o la navegación privada
+- si el usuario viene sin sesión, se muestra el flujo de login/registro
+- si el usuario aún no eligió vehículo, la app lo obliga a hacerlo antes de entrar a la pantalla principal

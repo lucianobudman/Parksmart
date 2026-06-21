@@ -6,26 +6,32 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  TextInput,
   SafeAreaView,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
+import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { globalStyles } from '../styles/global';
 import { openGoogleMaps, generateMockParkings, filterNearbyParkings } from '../utils/googleMapsUtils';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { createParking, getParkings, ParkingItem } from '../services/parkingService';
 import { getFavoriteParkings, toggleFavoriteParking } from '../services/favoritesService';
+import ParkingCard from '../components/ParkingCard';
+import CreateParkingForm from '../components/CreateParkingForm';
 
-const RADIUS_KM = 4;
+const MIN_RADIUS_KM = 1;
+const MAX_RADIUS_KM = 10;
+const DEFAULT_RADIUS_KM = 4;
 const FALLBACK_LOCATION = {
   latitude: -34.6037,
   longitude: -58.3816,
 };
 
 export default function HomeScreen() {
+  const navigation = useNavigation<any>();
   const authContext = useContext(AuthContext);
   const { location, loading: locationLoading, error: locationError } = useUserLocation();
-  const [showTestParking, setShowTestParking] = useState(false);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [parkingName, setParkingName] = useState('');
   const [parkingFee, setParkingFee] = useState<'yes' | 'no'>('no');
@@ -73,28 +79,13 @@ export default function HomeScreen() {
     loadFavorites();
   }, [user?.uid]);
 
-  const allParkings = [
-    ...generateMockParkings(),
-    ...parkings,
-    ...(showTestParking
-      ? [
-          {
-            id: 999,
-            name: '🧪 Parking Test',
-            lat: resolvedLocation.latitude,
-            lon: resolvedLocation.longitude,
-            fee: 'no' as const,
-            availableFor: ['auto', 'moto', 'camioneta'] as const,
-          },
-        ]
-      : []),
-  ];
+  const allParkings = [...generateMockParkings(), ...parkings];
 
   const nearbyParkings = filterNearbyParkings(
     allParkings,
     resolvedLocation.latitude,
     resolvedLocation.longitude,
-    RADIUS_KM,
+    radiusKm,
     user?.vehicleType,
   );
 
@@ -231,19 +222,17 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
-          {user?.vehicleType && (
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#E3F2FD',
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                borderRadius: 6,
-              }}
-              onPress={() => Alert.alert('Cambiar vehículo', 'Esta función se agregará pronto')}
-            >
-              <Text style={{ color: '#007AFF', fontWeight: '600', fontSize: 12 }}>Cambiar</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#F1F5F9',
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 6,
+            }}
+            onPress={() => navigation.navigate('UserConfig')}
+          >
+            <Text style={{ color: '#0F172A', fontWeight: '600', fontSize: 12 }}>Config</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -265,85 +254,41 @@ export default function HomeScreen() {
       ) : null}
 
       {showCreateForm && user?.role === 'admin' && (
-        <View style={[globalStyles.card, { marginBottom: 16 }]}> 
-          <Text style={globalStyles.subtitle}>Nuevo parking</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Nombre del parking"
-            value={parkingName}
-            onChangeText={setParkingName}
-          />
-          <Text style={{ marginTop: 4, marginBottom: 6, fontWeight: '600' }}>¿Tiene costo?</Text>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 10,
-                backgroundColor: parkingFee === 'yes' ? '#007AFF' : '#E8E8E8',
-              }}
-              onPress={() => setParkingFee('yes')}
-            >
-              <Text style={{ textAlign: 'center', color: parkingFee === 'yes' ? '#fff' : '#333', fontWeight: '700' }}>Pago</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 10,
-                backgroundColor: parkingFee === 'no' ? '#4CAF50' : '#E8E8E8',
-              }}
-              onPress={() => setParkingFee('no')}
-            >
-              <Text style={{ textAlign: 'center', color: parkingFee === 'no' ? '#fff' : '#333', fontWeight: '700' }}>Gratuito</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={{ marginTop: 12, marginBottom: 6, fontWeight: '600' }}>Disponible para</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {['auto', 'moto', 'camioneta'].map((vehicle) => {
-              const selected = parkingVehicles.includes(vehicle);
-              return (
-                <TouchableOpacity
-                  key={vehicle}
-                  style={{
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 999,
-                    marginRight: 8,
-                    marginBottom: 8,
-                    backgroundColor: selected ? '#007AFF' : '#F1F1F1',
-                  }}
-                  onPress={() => toggleVehicle(vehicle)}
-                >
-                  <Text style={{ color: selected ? '#fff' : '#333', fontWeight: '700' }}>
-                    {vehicle === 'auto' ? '🚗 Auto' : vehicle === 'moto' ? '🏍️ Moto' : '🚙 Camioneta'}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          <TouchableOpacity style={[globalStyles.button, { marginBottom: 0 }]} onPress={handleCreateParking} disabled={isSaving}>
-            {isSaving ? <ActivityIndicator color="#fff" /> : <Text style={globalStyles.buttonText}>Guardar parking</Text>}
-          </TouchableOpacity>
-        </View>
+        <CreateParkingForm
+          parkingName={parkingName}
+          parkingFee={parkingFee}
+          parkingVehicles={parkingVehicles}
+          isSaving={isSaving}
+          onChangeName={setParkingName}
+          onChangeFee={setParkingFee}
+          onToggleVehicle={toggleVehicle}
+          onSave={handleCreateParking}
+        />
       )}
 
-      <TouchableOpacity
+      <View
         style={{
-          backgroundColor: showTestParking ? '#4CAF50' : '#FF9800',
+          backgroundColor: '#F7F9FC',
           borderRadius: 12,
-          paddingVertical: 12,
+          padding: 14,
           marginBottom: 16,
-          elevation: 2,
         }}
-        onPress={() => setShowTestParking(!showTestParking)}
       >
-        <Text style={{ color: '#fff', fontWeight: '700', textAlign: 'center', fontSize: 14 }}>
-          {showTestParking ? '✓ Parking Test Activo' : '+ Agregar Parking Test'}
-        </Text>
-      </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ fontWeight: '700', color: '#1F2937' }}>Radio de búsqueda</Text>
+          <Text style={{ fontWeight: '700', color: '#007AFF' }}>{radiusKm} km</Text>
+        </View>
+        <Slider
+          minimumValue={MIN_RADIUS_KM}
+          maximumValue={MAX_RADIUS_KM}
+          step={1}
+          value={radiusKm}
+          onValueChange={(value) => setRadiusKm(Math.round(value))}
+          minimumTrackTintColor="#007AFF"
+          maximumTrackTintColor="#D9EAFD"
+          thumbTintColor="#007AFF"
+        />
+      </View>
 
       {locationError && (
         <View style={[globalStyles.card, { borderLeftColor: '#FF3B30', marginBottom: 16 }]}> 
@@ -356,7 +301,7 @@ export default function HomeScreen() {
         {showFallbackMessage && (
           <View style={[globalStyles.card, { borderLeftColor: '#FF9800', marginBottom: 8 }]}> 
             <Text style={{ color: '#FF9800', fontWeight: '700', marginBottom: 4 }}>
-              No hay parkings en 4 km, pero estos son los más cercanos
+              No hay parkings en {radiusKm} km, pero estos son los más cercanos
             </Text>
           </View>
         )}
@@ -367,74 +312,14 @@ export default function HomeScreen() {
             const isProcessing = favoriteLoadingId === String(parking.id);
 
             return (
-              <View
+              <ParkingCard
                 key={parking.id}
-                style={[
-                  parking.fee === 'yes' ? globalStyles.cardPremium : globalStyles.card,
-                ]}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={globalStyles.subtitle}>{parking.name}</Text>
-                    <View style={{ flexDirection: 'row', marginTop: 6, flexWrap: 'wrap' }}>
-                      {parking.fee === 'yes' ? (
-                        <View style={globalStyles.badge}>
-                          <Text style={globalStyles.badgeText}>💳 Pago</Text>
-                        </View>
-                      ) : (
-                        <View style={[globalStyles.badge, { backgroundColor: '#E8F5E9' }]}> 
-                          <Text style={[globalStyles.badgeText, { color: '#4CAF50' }]}>✓ Gratuito</Text>
-                        </View>
-                      )}
-                      {parking.availableFor && parking.availableFor.includes('auto') && (
-                        <View style={[globalStyles.badge, { backgroundColor: '#F3E5F5' }]}> 
-                          <Text style={[globalStyles.badgeText, { color: '#9C27B0' }]}>🚗 Auto</Text>
-                        </View>
-                      )}
-                      {parking.availableFor && parking.availableFor.includes('moto') && (
-                        <View style={[globalStyles.badge, { backgroundColor: '#FCE4EC' }]}> 
-                          <Text style={[globalStyles.badgeText, { color: '#E91E63' }]}>🏍️ Moto</Text>
-                        </View>
-                      )}
-                      {parking.availableFor && parking.availableFor.includes('camioneta') && (
-                        <View style={[globalStyles.badge, { backgroundColor: '#E0F2F1' }]}> 
-                          <Text style={[globalStyles.badgeText, { color: '#009688' }]}>🚙 Camioneta</Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity
-                      disabled={isProcessing}
-                      onPress={() => handleToggleFavorite(parking)}
-                      style={{
-                        backgroundColor: isFavorite ? '#FFF3CD' : '#F1F1F1',
-                        borderRadius: 999,
-                        padding: 10,
-                        marginRight: 8,
-                      }}
-                    >
-                      {isProcessing ? (
-                        <ActivityIndicator size="small" color="#007AFF" />
-                      ) : (
-                        <Text style={{ fontSize: 16 }}>{isFavorite ? '⭐' : '☆'}</Text>
-                      )}
-                    </TouchableOpacity>
-                    <View style={{ backgroundColor: '#E3F2FD', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 }}>
-                      <Text style={{ color: '#007AFF', fontWeight: '700', fontSize: 14 }}>
-                        {parking.distance.toFixed(1)} km
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={globalStyles.button}
-                  onPress={() => handleOpenMaps(parking.lat, parking.lon, parking.name)}
-                >
-                  <Text style={globalStyles.buttonText}>📍 Abrir en Google Maps</Text>
-                </TouchableOpacity>
-              </View>
+                parking={parking}
+                isFavorite={isFavorite}
+                isProcessing={isProcessing}
+                onToggleFavorite={() => handleToggleFavorite(parking)}
+                onOpenMaps={() => handleOpenMaps(parking.lat, parking.lon, parking.name)}
+              />
             );
           })
         ) : (
@@ -442,7 +327,7 @@ export default function HomeScreen() {
             <Text style={{ fontSize: 32, marginBottom: 12 }}>📍</Text>
             <Text style={globalStyles.subtitle}>Sin parkings cercanos</Text>
             <Text style={globalStyles.textSecondary}>
-              No hay parkings en un radio de {RADIUS_KM}km
+              No hay parkings en un radio de {radiusKm} km
             </Text>
           </View>
         )}
